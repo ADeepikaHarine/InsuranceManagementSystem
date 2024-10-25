@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Claim</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your custom CSS -->
+    <script src="/socket.io/socket.io.js"></script> <!-- Include Socket.IO for real-time communication if needed -->
+</head>
+<body>
+
+    <header>
+        <h1>Insurance Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="add-policy.html">Add Policy</a></li>
+                <li><a href="view-policies.html">View Policies</a></li>
+                <li><a href="submit-claim.html">Claims</a></li>
+                <li><a href="feedback.html">Feedback</a></li> <!-- Feedback link added here -->
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>Submit a New Claim</h2>
+            <form id="submitClaimForm">
+                <label for="claimNumber">Claim Number</label>
+                <input type="text" placeholder="Claim Number" id="claimNumber" required />
+
+                <label for="policyNumber">Policy Number</label>
+                <input type="text" placeholder="Policy Number" id="policyNumber" required />
+
+                <label for="claimDescription">Claim Description</label>
+                <textarea placeholder="Claim Description" id="claimDescription" required></textarea>
+
+                <button type="submit">Submit Claim</button>
+            </form>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        © 2024 Insurance Management System
+    </div>
+
+    <script>
+        const socket = io();
+
+        document.getElementById('submitClaimForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const claimData = {
+                claimNumber: document.getElementById('claimNumber').value,
+                policyNumber: document.getElementById('policyNumber').value,
+                claimDescription: document.getElementById('claimDescription').value,
+            };
+
+            try {
+                // Logic to submit claim (e.g., send to server)
+                const response = await fetch('http://localhost:3000/submit-claim', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(claimData),
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    alert(data.message);
+                    document.getElementById('submitClaimForm').reset();
+                } else {
+                    alert(data.error);
+                }
+            } catch (error) {
+                alert('Error submitting claim: ' + error.message);
+            }
+        });
+
+        socket.emit('request-claims');
+        socket.on('claims', (claims) => {
+            console.log('Claims received:', claims);
+        });
+    </script>
+
+</body>
+</html>

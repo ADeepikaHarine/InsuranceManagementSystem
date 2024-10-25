@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Policy</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your custom CSS -->
+    <script src="/socket.io/socket.io.js"></script> <!-- Include Socket.IO for real-time communication if needed -->
+</head>
+<body>
+
+    <header>
+        <h1>Insurance Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="add-policy.html">Add Policy</a></li>
+                <li><a href="view-policies.html">View Policies</a></li>
+                <li><a href="submit-claim.html">Claims</a></li>
+                <li><a href="feedback.html">Feedback</a></li> <!-- Feedback link added here -->
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>Add New Policy</h2>
+            <form id="addPolicyForm">
+                <label for="policyNumber">Policy Number</label>
+                <input type="text" placeholder="Policy Number" id="policyNumber" required pattern="[A-Za-z0-9]{5,}" />
+
+                <label for="policyHolderName">Policy Holder Name</label>
+                <input type="text" placeholder="Policy Holder Name" id="policyHolderName" required />
+
+                <label for="coverageAmount">Coverage Amount</label>
+                <input type="number" placeholder="Coverage Amount" id="coverageAmount" required min="1" />
+
+                <label for="policyType">Policy Type</label>
+                <input type="text" placeholder="Policy Type" id="policyType" required />
+
+                <label for="startDate">Start Date</label>
+                <input type="date" placeholder="Start Date" id="startDate" required />
+
+                <label for="endDate">End Date</label>
+                <input type="date" placeholder="End Date" id="endDate" required />
+
+                <label for="policyDescription">Policy Description</label>
+                <textarea placeholder="Policy Description" id="policyDescription" required></textarea>
+
+                <button type="submit">Add Policy</button>
+            </form>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        © 2024 Insurance Management System
+    </div>
+
+    <script>
+        const socket = io();
+
+        function validatePolicyForm() {
+            const policyNumber = document.getElementById('policyNumber').value;
+            const policyHolderName = document.getElementById('policyHolderName').value;
+            const coverageAmount = document.getElementById('coverageAmount').value;
+            const policyType = document.getElementById('policyType').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const policyDescription = document.getElementById('policyDescription').value;
+
+            if (!policyNumber || !policyHolderName || !coverageAmount || !policyType || !startDate || !endDate || !policyDescription || isNaN(coverageAmount)) {
+                alert('Please fill out all fields with valid data.');
+                return false;
+            }
+            return true;
+        }
+
+        document.getElementById('addPolicyForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            if (validatePolicyForm()) {
+                const policyData = {
+                    policyNumber: document.getElementById('policyNumber').value,
+                    policyHolderName: document.getElementById('policyHolderName').value,
+                    coverageAmount: document.getElementById('coverageAmount').value,
+                    policyType: document.getElementById('policyType').value,
+                    startDate: document.getElementById('startDate').value,
+                    endDate: document.getElementById('endDate').value,
+                    policyDescription: document.getElementById('policyDescription').value,
+                };
+
+                try {
+                    let policies = JSON.parse(localStorage.getItem('policies')) || [];
+                    policies.push({ ...policyData, id: Date.now() });
+                    localStorage.setItem('policies', JSON.stringify(policies));
+
+                    const response = await fetch('http://localhost:3000/add-policy', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(policyData),
+                    });
+                    const data = await response.json();
+                    if (response.ok) {
+                        alert(data.message);
+                        document.getElementById('addPolicyForm').reset();
+                    } else {
+                        alert(data.error);
+                    }
+                } catch (error) {
+                    alert('Error adding policy: ' + error.message);
+                }
+            }
+        });
+
+        socket.emit('request-policies');
+        socket.on('policies', (policies) => {
+            console.log('Policies received:', policies);
+        });
+    </script>
+
+</body>
+</html>

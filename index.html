@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insurance Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- Header and Navbar -->
+    <header>
+        <h1>Insurance Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="add-policy.html">Add Policy</a></li>
+                <li><a href="view-policies.html">View Policies</a></li>
+                <li><a href="submit-claim.html">Claims</a></li>
+                <li><a href="feedback.html">Feedback</a></li> <!-- Feedback link added here -->
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Dashboard Overview Section -->
+        <section class="dashboard-overview">
+            <h2>Dashboard Overview</h2>
+            
+            <!-- Active Policies Summary -->
+            <div class="summary-section">
+                <h3>Active Policies</h3>
+                <div id="activePoliciesSummary">
+                    <!-- Active Policies Count and Breakdown will be dynamically inserted here -->
+                </div>
+            </div>
+
+            <!-- Policies by Type (Chart) -->
+            <div class="chart-section">
+                <h3>Policies by Type</h3>
+                <canvas id="policiesChart" width="400" height="200"></canvas>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h3>Quick Actions</h3>
+                <button onclick="window.location.href='add-policy.html'">Add New Policy</button>
+                <button onclick="window.location.href='view-policies.html'">View Policies</button>
+                <button onclick="window.location.href='submit-claim.html'">Submit a Claim</button>
+            </div>
+        </section>
+
+        <!-- Recent Activity Section -->
+        <section class="recent-activity">
+            <h2>Recent Activity</h2>
+            <ul id="recentPolicies">
+                <!-- Recently added policies will be dynamically inserted here -->
+            </ul>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Insurance Management System</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        const socket = io();
+
+        // Fetch Active Policies Summary and Policies by Type
+        async function fetchDashboardData() {
+            try {
+                const response = await fetch('http://localhost:3000/policies');
+                const policies = await response.json();
+
+                // Active Policies Count and Breakdown
+                const activePolicies = policies.length;
+                const policyTypes = policies.reduce((acc, policy) => {
+                    acc[policy.policyType] = (acc[policy.policyType] || 0) + 1;
+                    return acc;
+                }, {});
+
+                const summarySection = document.getElementById('activePoliciesSummary');
+                summarySection.innerHTML = `
+                    <p>Total Active Policies: ${activePolicies}</p>
+                    <ul>
+                        ${Object.entries(policyTypes).map(([type, count]) => `<li>${type}: ${count}</li>`).join('')}
+                    </ul>
+                `;
+
+                // Chart.js - Policies by Type (Graphical Representation)
+                const ctx = document.getElementById('policiesChart').getContext('2d');
+                const chartData = {
+                    labels: Object.keys(policyTypes),
+                    datasets: [{
+                        label: 'Number of Policies',
+                        data: Object.values(policyTypes),
+                        backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#ff8e72', '#8e44ad']
+                    }]
+                };
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: chartData,
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error fetching dashboard data:', error);
+            }
+        }
+
+        // Fetch recent activity (last few added policies)
+        async function fetchRecentPolicies() {
+            try {
+                const response = await fetch('http://localhost:3000/policies');
+                const policies = await response.json();
+                const recentPoliciesList = document.getElementById('recentPolicies');
+                recentPoliciesList.innerHTML = '';
+
+                const recentPolicies = policies.slice(-5); // Get last 5 policies
+                recentPolicies.forEach(policy => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `Policy Number: ${policy.policyNumber}, Holder: ${policy.policyHolderName}, Type: ${policy.policyType}`;
+                    recentPoliciesList.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error('Error fetching recent policies:', error);
+            }
+        }
+
+        // Fetch dashboard data on page load
+        window.onload = function() {
+            fetchDashboardData();
+            fetchRecentPolicies();
+        };
+    </script>
+
+</body>
+</html>

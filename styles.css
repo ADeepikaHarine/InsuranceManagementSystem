@@ -1,0 +1,273 @@
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+/* Header and Navbar */
+header, .header {
+    background-color: #2c3e50; /* Darker blue-gray */
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+nav ul, .navbar {
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+    padding: 0;
+    background-color: #2c3e50; /* Darker blue-gray */
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav ul li a, .navbar a {
+    color: #ecf0f1; /* Light gray color */
+    padding: 14px 20px;
+    text-decoration: none;
+    text-align: center;
+    transition: background-color 0.3s, color 0.3s; /* Smooth hover transition */
+}
+
+nav ul li a:hover, .navbar a:hover {
+    background-color: #34495e; /* Slightly lighter gray */
+    color: #3498db; /* Blue color on hover */
+}
+
+/* Main content */
+main, .container {
+    padding: 20px;
+    margin-bottom: 60px; /* Ensure footer does not overlap with content */
+}
+
+/* Feedback form and list */
+.feedback-form, .feedback-list {
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+}
+
+h2 {
+    margin-top: 0;
+}
+
+/* Card and form styling */
+.policy-form, .card {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-bottom: 30px;
+}
+
+/* Add Policy Form Specific Styles */
+.add-policy-form {
+    background-color: #ffffff; /* White background for clarity */
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.add-policy-form label {
+    margin-bottom: 10px; /* Space between label and input */
+}
+
+.add-policy-form input[type="text"],
+.add-policy-form input[type="number"],
+.add-policy-form select,
+.add-policy-form textarea {
+    width: 100%; /* Full width */
+    padding: 10px; /* Spacing within input fields */
+    margin-bottom: 15px; /* Space below each input */
+    border: 1px solid #ccc; /* Light gray border */
+    border-radius: 4px; /* Rounded corners */
+}
+
+/* Submit Claim Form Specific Styles */
+.submit-claim-form {
+    background-color: #ffffff; /* White background for clarity */
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.submit-claim-form label {
+    margin-bottom: 10px; /* Space between label and input */
+}
+
+.submit-claim-form input[type="text"],
+.submit-claim-form input[type="number"],
+.submit-claim-form select,
+.submit-claim-form textarea {
+    width: 100%; /* Full width */
+    padding: 10px; /* Spacing within input fields */
+    margin-bottom: 15px; /* Space below each input */
+    border: 1px solid #ccc; /* Light gray border */
+    border-radius: 4px; /* Rounded corners */
+}
+
+input, select, textarea, button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #3498db; /* Blue button */
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #2980b9; /* Darker blue on hover */
+}
+
+/* Star rating */
+.star-rating {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 10px;
+}
+
+.star {
+    cursor: pointer;
+    font-size: 24px;
+    color: #ccc; /* Default star color */
+}
+
+.star.selected {
+    color: #ffcc00; /* Color for selected stars */
+}
+
+/* Feedback items */
+.feedback-item {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Active policies section */
+.active-policies {
+    background-color: #f1f1f1;
+    padding: 20px;
+    border-radius: 8px;
+    min-height: 200px; /* Ensure enough height for content */
+    margin-bottom: 60px; /* Ensure spacing to avoid footer overlap */
+}
+
+.policy-item {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #ddd;
+    border-radius: 4px;
+    word-wrap: break-word; /* Ensure long text wraps correctly */
+}
+
+/* Policy recommendation section */
+.policy-recommendation {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.policy-recommendation h3 {
+    margin-top: 0;
+}
+
+.policy-recommendation form {
+    display: flex;
+    flex-direction: column;
+}
+
+.policy-recommendation label,
+.policy-recommendation input {
+    margin-bottom: 10px;
+}
+
+.policy-recommendation button {
+    background-color: #3498db; /* Blue button */
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.policy-recommendation button:hover {
+    background-color: #2980b9; /* Darker blue on hover */
+}
+
+/* Footer */
+footer, .footer {
+    background-color: #2c3e50; /* Darker blue-gray */
+    color: white;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+
+/* CSS specifically for table styling */
+.policy-table-container {
+    width: 80%;
+    margin: 2rem auto;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto;
+    text-align: center;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 12px;
+    font-size: 16px;
+}
+
+th {
+    background-color: #3498db; /* Blue header */
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:hover {
+    background-color: #ddd;
+}
+
+/* Responsive design for table */
+@media (max-width: 600px) {
+    table, th, td {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .policy-table-container {
+        width: 95%;
+    }
+}

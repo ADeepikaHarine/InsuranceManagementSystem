@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css"> <!-- Link your styles here -->
+    <title>Feedback Form</title>
+</head>
+<body>
+    <header>
+        <h1>Insurance Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="add-policy.html">Add Policy</a></li>
+                <li><a href="view-policies.html">View Policies</a></li>
+                <li><a href="submit-claim.html">Claims</a></li>
+                <li><a href="feedback.html">Feedback</a></li> <!-- Feedback link added here -->
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="feedback-form">
+            <h2>Leave your Feedback</h2>
+            <form id="feedbackForm">
+                <input type="text" id="policyNumber" placeholder="Policy Number" required>
+                <input type="text" id="userId" placeholder="User ID" required>
+                
+                <div class="star-rating" id="starRating">
+                    <span class="star" data-value="1">&#9733;</span>
+                    <span class="star" data-value="2">&#9733;</span>
+                    <span class="star" data-value="3">&#9733;</span>
+                    <span class="star" data-value="4">&#9733;</span>
+                    <span class="star" data-value="5">&#9733;</span>
+                </div>
+                <textarea id="comment" placeholder="Your comments" required></textarea>
+                <button type="submit">Submit Feedback</button>
+            </form>
+        </div>
+
+        <div class="feedback-list">
+            <h2>Feedback for Policy</h2>
+            <div id="existingFeedback"></div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Insurance Management System</p>
+    </footer>
+    <script>
+        let selectedRating = 0;
+
+        // Handle star rating selection
+        const stars = document.querySelectorAll('.star');
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                selectedRating = star.getAttribute('data-value');
+                updateStarDisplay();
+            });
+        });
+
+        function updateStarDisplay() {
+            stars.forEach(star => {
+                if (star.getAttribute('data-value') <= selectedRating) {
+                    star.classList.add('selected');
+                } else {
+                    star.classList.remove('selected');
+                }
+            });
+        }
+
+        document.getElementById('feedbackForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const policyNumber = document.getElementById('policyNumber').value;
+            const userId = document.getElementById('userId').value;
+            const rating = selectedRating;
+            const comment = document.getElementById('comment').value;
+
+            fetch('/submit-feedback', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ policyNumber, userId, rating, comment })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                document.getElementById('feedbackForm').reset(); // Reset the form
+                selectedRating = 0; // Reset selected rating
+                updateStarDisplay(); // Reset star display
+                fetchFeedback(policyNumber); // Refresh feedback display
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to submit feedback');
+            });
+        });
+
+        // Function to fetch existing feedback for a specific policy
+        function fetchFeedback(policyNumber) {
+            fetch(`/feedback/${policyNumber}`)
+                .then(response => response.json())
+                .then(feedback => {
+                    const feedbackContainer = document.getElementById('existingFeedback');
+                    feedbackContainer.innerHTML = ''; // Clear existing feedback
+                    feedback.forEach(item => {
+                        const feedbackItem = document.createElement('div');
+                        feedbackItem.className = 'feedback-item';
+                        feedbackItem.innerHTML = `
+                            <strong>${item.rating} Stars</strong>
+                            <p>${item.comment}</p>
+                            <small>By User: ${item.userId} on ${new Date(item.createdAt).toLocaleDateString()}</small>
+                        `;
+                        feedbackContainer.appendChild(feedbackItem);
+                    });
+                })
+                .catch(error => console.error('Error fetching feedback:', error));
+        }
+
+        // Call fetchFeedback on page load (for demonstration, you can modify this logic)
+        window.onload = function() {
+            const policyNumber = 'samplePolicyNumber'; // Replace this with the actual policy number
+            fetchFeedback(policyNumber);
+        };
+    </script>
+</body>
+</html>

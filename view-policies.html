@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Policies</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your custom CSS -->
+    <script src="/socket.io/socket.io.js"></script> <!-- Include Socket.IO for real-time communication if needed -->
+</head>
+<body>
+
+    <header>
+        <h1>Insurance Management System</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="add-policy.html">Add Policy</a></li>
+                <li><a href="view-policies.html">View Policies</a></li>
+                <li><a href="submit-claim.html">Claims</a></li>
+                <li><a href="feedback.html">Feedback</a></li> <!-- Feedback link added here -->
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>Policies</h2>
+            <table id="policiesTable">
+                <thead>
+                    <tr>
+                        <th>Policy Number</th>
+                        <th>Policy Holder Name</th>
+                        <th>Coverage Amount</th>
+                        <th>Policy Type</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Description</th>
+                        <th>Action</th> <!-- Added Action column for Delete button -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Policies will be dynamically inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="footer">
+        © 2024 Insurance Management System
+    </div>
+
+    <script>
+        const socket = io(); // Initialize Socket.IO for real-time communication (if needed)
+
+        // Function to fetch policies from localStorage and display them in the table
+        function loadPolicies() {
+            const policies = JSON.parse(localStorage.getItem('policies')) || [];
+
+            const policiesTable = document.getElementById('policiesTable').querySelector('tbody');
+            policiesTable.innerHTML = ''; // Clear existing rows
+
+            if (policies.length === 0) {
+                const noDataRow = document.createElement('tr');
+                const noDataCell = document.createElement('td');
+                noDataCell.setAttribute('colspan', '8'); // Updated colspan for the new Action column
+                noDataCell.textContent = 'No policies available';
+                noDataRow.appendChild(noDataCell);
+                policiesTable.appendChild(noDataRow);
+            } else {
+                policies.forEach((policy, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${policy.policyNumber}</td>
+                        <td>${policy.policyHolderName}</td>
+                        <td>${policy.coverageAmount}</td>
+                        <td>${policy.policyType}</td>
+                        <td>${policy.startDate}</td>
+                        <td>${policy.endDate}</td>
+                        <td>${policy.policyDescription}</td>
+                        <td><button onclick="deletePolicy(${index})">Delete</button></td> <!-- Delete button with index -->
+                    `;
+                    policiesTable.appendChild(row);
+                });
+            }
+        }
+
+        // Function to delete a policy from localStorage
+        function deletePolicy(index) {
+            let policies = JSON.parse(localStorage.getItem('policies')) || [];
+            policies.splice(index, 1); // Remove policy at the specified index
+            localStorage.setItem('policies', JSON.stringify(policies)); // Update localStorage
+            loadPolicies(); // Reload the policies to update the table
+        }
+
+        // Call loadPolicies to display the policies on page load
+        window.addEventListener('DOMContentLoaded', loadPolicies);
+
+        // Optional: Real-time update using Socket.IO (if policies are added dynamically on the server)
+        socket.emit('request-policies');
+        socket.on('policies', (policies) => {
+            console.log('Policies received:', policies);
+            loadPolicies(); // Reload the policies from the server if necessary
+        });
+    </script>
+
+</body>
+</html>
